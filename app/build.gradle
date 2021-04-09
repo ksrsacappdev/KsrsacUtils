@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.ksrsac.photolatlng"
+      //  applicationId "com.ksrsac.photolatlng"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
