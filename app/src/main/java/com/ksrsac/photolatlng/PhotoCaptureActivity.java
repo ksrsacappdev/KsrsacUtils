@@ -54,7 +54,6 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Intent intent = getIntent();
         latText = findViewById(R.id.latitude);
         lonText = findViewById(R.id.longitude);
         timeText = findViewById(R.id.time);
@@ -88,7 +87,7 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
             ccv2WithoutPreview = new CameraControllerV2WithoutPreview(getApplicationContext());
             startstoppreview.setChecked(false);
         }
-        startstoppreview.setOnClickListener(new View.OnClickListener(){
+    /*    startstoppreview.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 if(startstoppreview.isChecked()) {
@@ -103,7 +102,7 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
                 }
             }
         });
-
+*/
         findViewById(R.id.getpicture).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
