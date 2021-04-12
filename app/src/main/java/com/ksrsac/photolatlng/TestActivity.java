@@ -35,6 +35,7 @@ public class TestActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Map<String, String> gridCodes = AppUtils.GetGridCode(Double.parseDouble(editTextLat.getText().toString()), Double.parseDouble(editTextLng.getText().toString()),1);
                 Log.d(TAG, "onClick: "+gridCodes.get("1M"));
+
             }
         });
         photoButton = findViewById(R.id.photo);
