@@ -39,7 +39,7 @@ public class GridCodeGenerationActivity extends AppCompatActivity {
            public void onClick(View v) {
                lat = Double.parseDouble(editTextLat.getText().toString());
                lon =  Double.parseDouble(editTextLng.getText().toString());
-               Map<String, String> data = AppUtils.GetGridCode(lat, lon);
+               Map<String, String> data = AppUtils.GetGridCode(lat, lon, 1);
                Log.d(TAG, "onClick: "+data.get("5K"));
            }
        });
