@@ -14,8 +14,9 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name=".TestActivity">
-           <!-- <intent-filter>
+        <activity android:name=".TestActivity"
+            android:theme="@style/Theme.AppCompat.Light">
+          <!--  <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />

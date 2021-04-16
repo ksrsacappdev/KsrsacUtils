@@ -33,9 +33,11 @@ public  class AppUtils {
         }
         return null;
     }
-    public static Map<String, String> startCal(double lat, double lon){
+    public static Map<String, String> startCal(double latv, double lonv){
         latString = lat+"";
         lonString = lon+"";
+        lat = latv;
+        lon = lonv;
         for(int i = 0; i<5; i++){
             for (int j=0; j<5; j++)
             {
@@ -116,12 +118,12 @@ public  class AppUtils {
     private static Map<String, String> generate100MGrid(String gridCode) {
         int lngv = (int) lon % 1000;
         int latv = (int) lat % 1000;
-        Log.d(TAG, "generate1kGrid -  " + lngv + " " + latv);
+        Log.d(TAG, "generate100MGrid -  " + lngv + " " + latv);
 
         double latDiv = (double) latv / 100;
         double lngDiv = (double) lngv / 100;
 
-        Log.d(TAG, "generate1kGrid -  " + latDiv + " " + lngDiv);
+        Log.d(TAG, "generate100MGrid -  " + latDiv + " " + lngDiv);
         int latCeil = (int) Math.ceil(latDiv);
         int lngCeil = (int) Math.ceil(lngDiv);
         row = latCeil;
@@ -181,7 +183,7 @@ public  class AppUtils {
             row = latCeil-1;
         if(lngCeil>0)
             col = lngCeil-1;
-        Log.d(TAG, "generate20MGrid -  " + latCeil + " " + lngCeil);
+        Log.d(TAG, "generate4MGrid -  " + latCeil + " " + lngCeil);
 
         Log.d(TAG, "generate4MGrid -  "+(gridCode+""+FiveCrossFive[row][col]));
         gridCode = gridCode+""+FiveCrossFive[row][col];
@@ -206,7 +208,7 @@ public  class AppUtils {
             row = latCeil-1;
         if(lngCeil>0)
             col = lngCeil-1;
-        Log.d(TAG, "generate20MGrid -  " + latCeil + " " + lngCeil);
+        Log.d(TAG, "generate1MGrid -  " + latCeil + " " + lngCeil);
 
         Log.d(TAG, "generate1MGrid -  "+(gridCode+""+fourCrossFour[row][col]));
         gridCode = gridCode+""+fourCrossFour[row][col];
