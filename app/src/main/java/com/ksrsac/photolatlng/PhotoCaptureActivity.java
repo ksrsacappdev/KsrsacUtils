@@ -15,6 +15,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,8 +38,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-public class PhotoCaptureActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, GPSTracker.locationChanged, CameraControllerV2WithPreview.PhotoTakenCompleted{
+public class PhotoCaptureActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, GPSTracker.locationChanged, CameraControllerV2WithPreview.PhotoTakenCompleted, SensorEventListener {
     private static final String TAG = "PhotoCaptureActivity";
     CameraControllerV2WithPreview ccv2WithPreview;
     CameraControllerV2WithoutPreview ccv2WithoutPreview;
@@ -50,6 +55,10 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
     GPSTracker gpsTracker;
     int height, width;
     private File mFile;
+    private SensorManager mSensorManager;
+    private Sensor mOrientation;
+
+    private TextView textViewPitch, textViewRoll, textViewAzimuth;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -60,7 +69,18 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
         lonText = findViewById(R.id.longitude);
         timeText = findViewById(R.id.time);
         altText = findViewById(R.id.altitude);
+        textViewPitch = findViewById(R.id.pitch);
+        textViewRoll = findViewById(R.id.roll);
+        textViewAzimuth = findViewById(R.id.azimuth);
         get_location_data();
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> sensorList  =
+                mSensorManager.getSensorList(Sensor.TYPE_ALL);
+        if(sensorList.contains( mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION))){
+            mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        }else{
+            //  Toast.makeText(DataCollection_Tanks.this,"No sensor detected, photo angel cannot be captured.",Toast.LENGTH_SHORT).show();
+        }
         mFile = new File(getIntent().getStringExtra("FILE"));
 
         gpsTracker = new GPSTracker(getApplicationContext(), this);
@@ -192,6 +212,21 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         timeText.setText("Date & Time:\n"+ sdf.format(date) );
+    }
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float azimuth_angle = event.values[0];
+        float pitch_angle = event.values[1];
+        float roll_angle = event.values[2];
+
+       textViewAzimuth.setText("Azimuth\n"+String.valueOf(azimuth_angle));
+        textViewPitch.setText("pitch\n"+String.valueOf(pitch_angle));
+        textViewRoll.setText("Roll\n"+String.valueOf(roll_angle));
+
+    }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     public static int convertDpToPixels(float dp) {

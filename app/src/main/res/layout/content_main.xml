@@ -58,6 +58,24 @@
                     android:textColor="@color/white"
                     android:text="time"
                     android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="pitch"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/roll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="Roll"
+                    android:visibility="visible" />
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -88,7 +106,17 @@
                     android:textColor="@color/white"
                     android:text="time"
                     android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/azimuth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="azimuth"
+                    android:visibility="visible" />
+
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
