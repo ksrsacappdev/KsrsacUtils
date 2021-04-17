@@ -224,6 +224,18 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
         textViewRoll.setText("Roll\n"+String.valueOf(roll_angle));
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
