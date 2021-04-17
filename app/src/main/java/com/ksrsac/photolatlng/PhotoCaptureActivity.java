@@ -53,7 +53,7 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_photocapture);
         latText = findViewById(R.id.latitude);
         lonText = findViewById(R.id.longitude);
         timeText = findViewById(R.id.time);
