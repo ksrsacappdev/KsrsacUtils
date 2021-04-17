@@ -14,16 +14,17 @@
         android:supportsRtl="true">
         <activity android:name=".TestActivity"
             >
-          <!--  <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
         <activity android:name=".GridCodeGenerationActivity">
 
         </activity>
-        <activity android:name=".PhotoCaptureActivity"></activity>
+        <activity android:name=".PhotoCaptureActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>
