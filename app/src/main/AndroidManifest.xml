@@ -12,13 +12,12 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true">
-        <activity android:name=".TestActivity"
-            >
-            <intent-filter>
+        <activity android:name=".TestActivity">
+          <!--  <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity android:name=".GridCodeGenerationActivity">
 
