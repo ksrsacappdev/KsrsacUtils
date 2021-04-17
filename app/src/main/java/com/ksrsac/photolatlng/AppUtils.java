@@ -10,6 +10,15 @@ import java.util.Locale;
 import java.util.Map;
 
 public  class AppUtils {
+
+    public class Constants{
+        public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 95;
+        public static final int MY_PERMISSIONS_REQUEST_ACCESS_CAMERA = 97;
+        public static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 95;
+        public static final int MY_PERMISSIONS_REQUEST_LOCATION = 96;
+        public static final int MY_PERMISSIONS_REQUEST_ACCESS_WIFI_STATE = 98;
+        public static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 97;
+    }
     private static final String TAG = "AppUtils";
     static double lat = 1721117, lon = 237134;
     static String latString = "1721117", lonString = "237134";

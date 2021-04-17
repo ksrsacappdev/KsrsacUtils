@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,6 +60,7 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
         lonText = findViewById(R.id.longitude);
         timeText = findViewById(R.id.time);
         altText = findViewById(R.id.altitude);
+        get_location_data();
         mFile = new File(getIntent().getStringExtra("FILE"));
 
         gpsTracker = new GPSTracker(getApplicationContext(), this);
@@ -278,5 +281,93 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
         data.putExtra("FILE", mFile.toString());
         setResult(RESULT_OK, data);
         finish();
+    }
+
+    LocationListener mlocListener;
+    LocationManager mlocManager;
+    static Location location_loc;
+
+    public void get_location_data() {
+        mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mlocListener = new MyLocationListener();
+        if (!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !mlocManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && !mlocManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+            showGPSDisabledAlertToUser();
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            checkLocationPermission();
+        } else {
+            if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                location_loc = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            } else if (mlocManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                location_loc = mlocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            } else if (mlocManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                location_loc = mlocManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            }
+            if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, mlocListener);
+            } else if (mlocManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, mlocListener);
+            } else if (mlocManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                mlocManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, mlocListener);
+            }
+        }
+    }
+
+    public class MyLocationListener implements LocationListener {
+        @Override
+        public void onLocationChanged(Location loc) {
+            location_loc = loc;
+            setLatLong(loc);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(getApplicationContext(), getString(R.string.gps_disable1), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    }
+
+    private void showGPSDisabledAlertToUser() {
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage(getString(R.string.gps_disable))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //  InternetOn="internetStatus";
+
+                        Intent callGPSSettingIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(callGPSSettingIntent);
+
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        android.app.AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+    public void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        AppUtils.Constants.MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        AppUtils.Constants.MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+
+        }
     }
 }

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PhotoLatLng</string>
+    <string name="gps_disable1">GPS Disable</string>
+    <string name="cancel">Cancel</string>
+    <string name="gps_not_there">GPS not available </string>
+    <string name="gps_not_available">Please wait..Your gps is not available </string>
+    <string name="settings">Settings</string>
+    <string name="gps_disable">GPS is disabled in your device. Would you like to enable it? </string>
+
 </resources>
