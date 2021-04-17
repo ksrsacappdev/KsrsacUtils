@@ -186,8 +186,8 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
     }
 
     private void setLatLong(Location locationGPS) {
-        latText.setText(latitude);
-        lonText.setText(longitude);
+        latText.setText(locationGPS.getLatitude()+"");
+        lonText.setText(locationGPS.getLongitude()+"");
         altText.setText("Altitude:\n"+locationGPS.getAltitude()+"");
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
