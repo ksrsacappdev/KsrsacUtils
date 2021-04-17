@@ -22,8 +22,13 @@
         <activity android:name=".GridCodeGenerationActivity">
 
         </activity>
-        <activity android:name=".PhotoCaptureActivity"
-            android:exported="true"/>
+        <activity android:name="com.ksrsac.photolatlng.PhotoCaptureActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="my.package.action.MY_ACTION"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
