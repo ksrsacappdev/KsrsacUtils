@@ -221,12 +221,39 @@ public class GridCodeGenerationActivity extends AppCompatActivity {
         row = latCeil;
         col = lngCeil;
         if(latCeil>0)
-            row = latCeil-1;
-        if(lngCeil>0)
-            col = lngCeil-1;
-        Log.d(TAG, "generate20MGrid -  " + latCeil + " " + lngCeil);
+        {
 
-        Log.d(TAG, "generate1MGrid -  "+(gridCode+""+fourCrossFour[row][col]));
+            if (lat % 1 != 0)
+            {
+                System.out.print ("Decimal");
+            }
+            else
+            {
+                System.out.print ("Integer");
+            }
+            if(lat % 1 != 0)
+            {
+                row = latCeil;
+            }
+            else
+            {
+                row = latCeil-1;
+            }
+        }
+        if(lngCeil>0)
+        {
+            if(lon % 1 != 0){
+                col = lngCeil;
+            }
+            else
+            {
+                col = lngCeil-1;
+            }
+
+        }
+        Log.d(TAG, "generate1MGrid 1M  columns-  " + row + " " + col);
+
+        Log.d(TAG, "generate1MGrid 1M-  "+(gridCode+""+fourCrossFour[row][col]));
         gridCode = gridCode+""+fourCrossFour[row][col];
         data = data +"\n 1M - "+gridCode;
         one = gridCode;
