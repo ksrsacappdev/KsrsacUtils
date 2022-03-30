@@ -114,7 +114,7 @@ public class SampleTestActivity extends AppCompatActivity {
         btnSplit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PolygonSplitActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NewPolygonSplitActivity.class);
                 intent.putParcelableArrayListExtra("Coordinates", (ArrayList<? extends Parcelable>) polygonCoordinatesList);
                 intent.putParcelableArrayListExtra("Vertices", (ArrayList<? extends Parcelable>) verticesList);
                 startActivityForResult(intent, 2000);
