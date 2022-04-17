@@ -143,11 +143,10 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         vertexList = getIntent().getParcelableArrayListExtra("Vertices");
         polyGonCoordinateList = new ArrayList<>();
 
-        for(int i = 0; i<polygonCoordinates.size(); i++)
-        {
+        for (int i = 0; i < polygonCoordinates.size(); i++) {
             Coordinate coordinate = new Coordinate(polygonCoordinates.get(i).getLat(), polygonCoordinates.get(i).getLng());
             polyGonCoordinateList.add(coordinate);
-            Log.d(TAG, "onCreate: "+polyGonCoordinateList.get(i).x+" "+polyGonCoordinateList.get(i).y);
+            Log.d(TAG, "onCreate: " + polyGonCoordinateList.get(i).x + " " + polyGonCoordinateList.get(i).y);
             latLngList.add(new LatLng(polygonCoordinates.get(i).getLat(), polygonCoordinates.get(i).getLng()));
         }
 
@@ -288,38 +287,46 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
 
     }
 
-    private void findOffset(List<LatLng> finalPoints, int d1, int d2)
-    {
+    private void findOffset(List<LatLng> finalPoints, int d1, int d2) {
+
+        double totalDistnacebtwnPoint = meters(finalPoints.get(0).latitude, finalPoints.get(0).longitude, finalPoints.get(1).latitude, finalPoints.get(1).longitude);
+        double fraction = (double) d1/totalDistnacebtwnPoint;
+        LatLng Intermediate = IntermediatePoint(finalPoints.get(0).latitude, finalPoints.get(0).longitude, finalPoints.get(1).latitude, finalPoints.get(1).longitude, fraction);
+
 
         LineSegment ls = new LineSegment(finalPoints.get(0).latitude, finalPoints.get(0).longitude, finalPoints.get(1).latitude, finalPoints.get(1).longitude);
 
-        double brng2 = calculateDirection(finalPoints.get(0).latitude,finalPoints.get(0).longitude, finalPoints.get(1).latitude,finalPoints.get(1).longitude);
-        LatLng latLng = findNextPoint(brng2, d1/1000.0, finalPoints.get(0).latitude,finalPoints.get(0).longitude);
+        double brng2 = calculateDirection(finalPoints.get(0).latitude, finalPoints.get(0).longitude, finalPoints.get(1).latitude, finalPoints.get(1).longitude);
 
-        double angleSum = brng2+90;
 
-        Log.d(TAG, "onCreate: angle:"+angleSum+" "+brng2);
+        //LatLng latLng = findNextPoint(brng2, d1 / 1000.0, finalPoints.get(0).latitude, finalPoints.get(0).longitude);
 
-        LatLng latLng2 = findNextPoint(angleSum, d2/1000.0, latLng.latitude, latLng.longitude);
-        Log.d(TAG, "onCreate: "+latLng2.latitude+" "+latLng2.longitude);
+        double angleSum = (brng2 + 90);
+
+        Log.d(TAG, "onCreate: angle:" + angleSum + " " + brng2);
+
+        LatLng latLng2 = findNextPoint(angleSum, d2 / 1000.0, Intermediate.latitude, Intermediate.longitude);
+        Log.d(TAG, "onCreate: " + latLng2.latitude + " " + latLng2.longitude);
 
         double offsetDistance = 1.0;
 // calculate Point right to start point
         Coordinate startRight = ls.pointAlongOffset(0, offsetDistance);
-        Log.d(TAG, "onCreate: startRight:"+startRight.x+","+startRight.y);
+        Log.d(TAG, "onCreate: startRight:" + startRight.x + "," + startRight.y);
 // calculate Point left to start point
         Coordinate startLeft = ls.pointAlongOffset(0, -offsetDistance);
-        Log.d(TAG, "onCreate: startLeft:"+startLeft.x+","+startLeft.y);
+        Log.d(TAG, "onCreate: startLeft:" + startLeft.x + "," + startLeft.y);
 
 // calculate Point right to end point
         Coordinate endRight = ls.pointAlongOffset(1, offsetDistance);
-        Log.d(TAG, "onCreate: endRight:"+endRight.x+","+endRight.y);
+        Log.d(TAG, "onCreate: endRight:" + endRight.x + "," + endRight.y);
 
 // calculate Point left to end point
         Coordinate endLeft = ls.pointAlongOffset(1, -offsetDistance);
-        Log.d(TAG, "onCreate: endLeft:"+endLeft.x+","+endLeft.y);
+        Log.d(TAG, "onCreate: endLeft:" + endLeft.x + "," + endLeft.y);
     }
+
     List<LatLng> finalPoints = new ArrayList<>();
+
     public void popupWindow(int type) {
         List<LatLng> selectedPointsforSplit = new ArrayList<>();
 
@@ -332,23 +339,22 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         textView.setText("Select points");
         insertPoint.addView(textView);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(10,10,10,10);
+        params.setMargins(10, 10, 10, 10);
         try {
-            for (int i = 0; i < latLngList.size()-1; i++) {
+            for (int i = 0; i < latLngList.size() - 1; i++) {
                 Button button = new Button(this);
-                button.setText((i + 1)+"");
+                button.setText((i + 1) + "");
                 button.setLayoutParams(params);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         button.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
-                        selectedPointsforSplit.add(latLngList.get(Integer.parseInt(button.getText().toString())-1));
+                        selectedPointsforSplit.add(latLngList.get(Integer.parseInt(button.getText().toString()) - 1));
                     }
                 });
                 insertPoint.addView(button);
             }
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         EditText editText = new EditText(this);
@@ -360,8 +366,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         EditText editText2 = new EditText(this);
         editText2.setHint("Enter offset distance in mtr");
         editText2.setInputType(InputType.TYPE_CLASS_NUMBER);
-        if(type==2)
-        {
+        if (type == 2) {
             insertPoint.addView(editText2);
         }
 
@@ -392,31 +397,81 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         buttonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    double brng = calculateDirection(selectedPointsforSplit.get(0).latitude, selectedPointsforSplit.get(0).longitude, selectedPointsforSplit.get(1).latitude, selectedPointsforSplit.get(1).longitude);
-                    LatLng latLng = findNextPoint(brng, (double) Integer.parseInt(editText.getText().toString()) / 1000.0, selectedPointsforSplit.get(0).latitude, selectedPointsforSplit.get(0).longitude);
-                    if (finalPoints.size() == 0) {
-                        finalPoints.add(selectedPointsforSplit.get(0));
-                        finalPoints.add(latLng);
-                    } else {
-                        finalPoints.add(latLng);
-                        finalPoints.add(selectedPointsforSplit.get(0));
-                    }
-                    if(type==2)
-                    {
-                        findOffset(selectedPointsforSplit, Integer.parseInt(editText.getText().toString()), Integer.parseInt(editText2.getText().toString()));
-                    }
+
+                double totalDistnacebtwnPoint = meters(selectedPointsforSplit.get(0).latitude, selectedPointsforSplit.get(0).longitude, selectedPointsforSplit.get(1).latitude, selectedPointsforSplit.get(1).longitude);
+                double fraction = (double) Integer.parseInt(editText.getText().toString())/totalDistnacebtwnPoint;
+
+                Log.d(TAG, "onClick: "+fraction+" and dist: "+totalDistnacebtwnPoint);
+                LatLng latLng = IntermediatePoint(selectedPointsforSplit.get(0).latitude, selectedPointsforSplit.get(0).longitude, selectedPointsforSplit.get(1).latitude, selectedPointsforSplit.get(1).longitude, fraction);
+                // double brng = calculateDirection(selectedPointsforSplit.get(0).latitude, selectedPointsforSplit.get(0).longitude, selectedPointsforSplit.get(1).latitude, selectedPointsforSplit.get(1).longitude);
+                // LatLng latLng = findNextPoint(brng, (double) Integer.parseInt(editText.getText().toString()) / 1000.0, selectedPointsforSplit.get(0).latitude, selectedPointsforSplit.get(0).longitude);
+                if (finalPoints.size() == 0) {
+                    finalPoints.add(selectedPointsforSplit.get(0));
+                    finalPoints.add(latLng);
+                } else {
+                    finalPoints.add(latLng);
+                    finalPoints.add(selectedPointsforSplit.get(0));
+                }
+                addMarker(latLng, 12);
+                if (type == 2) {
+                    findOffset(selectedPointsforSplit, Integer.parseInt(editText.getText().toString()), Integer.parseInt(editText2.getText().toString()));
+                }
+
+                LineSegment ls = new LineSegment(13.096176, 77.570611, 13.084230, 77.570872);
+                Log.d(TAG, "findOffset isVertical: " + ls.isVertical());
+                Log.d(TAG, "findOffset isHorizontal : " + ls.isHorizontal());
+                Coordinate startRight = ls.pointAlongOffset(0, 1);
+                Log.d(TAG, "onCreate: startRight:" + startRight.x + "," + startRight.y);
 
                 popupWindow.dismiss();
             }
         });
     }
 
-    public void resetOnScreenMarkers()
-    {
+    private static final double r2d = 180.0D / 3.141592653589793D;
+    private static final double d2r = 3.141592653589793D / 180.0D;
+    private static final double d2km = 111189.57696D * r2d;
+    public  double meters(double lt1, double ln1, double lt2, double ln2) {
+        double x = lt1 * d2r;
+        double y = lt2 * d2r;
+        return Math.acos( Math.sin(x) * Math.sin(y) + Math.cos(x) * Math.cos(y) * Math.cos(d2r * (ln1 - ln2))) * d2km;
+    }
+    LatLng IntermediatePoint(double lat1, double lon1, double lat2, double lon2, double fraction) {
+        double φ1 = Math.toRadians(lat1), λ1 = Math.toRadians(lon1);
+        double φ2 = Math.toRadians(lat2), λ2 = Math.toRadians(lon2);
+
+        // distance between points
+        double Δφ = φ2 - φ1;
+        double Δλ = λ2 - λ1;
+        double a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2)
+                + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        double δ = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double A = Math.sin((1 - fraction) * δ) / Math.sin(δ);
+        double B = Math.sin(fraction * δ) / Math.sin(δ);
+
+        double x = A * Math.cos(φ1) * Math.cos(λ1) + B * Math.cos(φ2) * Math.cos(λ2);
+        double y = A * Math.cos(φ1) * Math.sin(λ1) + B * Math.cos(φ2) * Math.sin(λ2);
+        double z = A * Math.sin(φ1) + B * Math.sin(φ2);
+
+        double φ3 = Math.atan2(z, Math.sqrt(x * x + y * y));
+        double λ3 = Math.atan2(y, x);
+
+        double lat = Math.toDegrees(φ3);
+        double lon = Math.toDegrees(λ3);
+
+        System.out.println("Intermediate Lat:" + lat + "," + lon);
+
+        return new LatLng(lat, lon);
+
+    }
+
+    public void resetOnScreenMarkers() {
         mMap.clear();
         vertexList.clear();
-     //   retrieveFileFromResource();
+        //   retrieveFileFromResource();
     }
+
     List<String> polygondata;
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -436,20 +491,19 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             public void onMapLoaded() {
                 GeoJsonLayer layer3 = null;
                 try {
-                   // findOffset();
+                    // findOffset();
                     layer3 = new GeoJsonLayer(mMap, R.raw.geo, NewPolygonSplitActivity.this);
-                  //  addGeoJsonLayerToMap(layer3);
+                    //  addGeoJsonLayerToMap(layer3);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(latLngList.size()>0)
-                {
-                      polygon(latLngList);
+                if (latLngList.size() > 0) {
+                    polygon(latLngList);
                 }
-              //  retrieveFileFromResource();
-               // new DownloadGeoJsonFile().execute("https://gist.githubusercontent.com/wavded/1200773/raw/e122cf709898c09758aecfef349964a8d73a83f3/sample.json");
+                //  retrieveFileFromResource();
+                // new DownloadGeoJsonFile().execute("https://gist.githubusercontent.com/wavded/1200773/raw/e122cf709898c09758aecfef349964a8d73a83f3/sample.json");
             }
         });
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
@@ -479,14 +533,12 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             public void onCameraIdle() {
                 lat = mMap.getCameraPosition().target.latitude;
                 lon = mMap.getCameraPosition().target.longitude;
-
             }
         });
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                if(typeSelected==3)
-                {
+                if (typeSelected == 3) {
                     CoordinateWithDistanceModel coordinateWithDistanceModel = new CoordinateWithDistanceModel();
                     coordinateWithDistanceModel.setLat(latLng.latitude);
                     coordinateWithDistanceModel.setLng(latLng.longitude);
@@ -503,6 +555,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         });
 
     }
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -512,8 +565,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         mGoogleApiClient.connect();
     }
 
-    public void drawPolygon(List<LatLng> mLatLngList)
-    {
+    public void drawPolygon(List<LatLng> mLatLngList) {
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                 .clickable(true)
                 .width(6.0f)
@@ -522,6 +574,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         // Store a data object with the polyline, used here to indicate an arbitrary type.
         polyline1.setTag("A");
     }
+
     @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -535,9 +588,11 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                     mLocationRequest, this);
         }
     }
+
     @Override
     public void onConnectionSuspended(int i) {
     }
+
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
@@ -560,8 +615,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         }
         Location locations = locationManager.getLastKnownLocation(provider);
         List<String> providerList = locationManager.getAllProviders();
-        if (null != locations && null != providerList && providerList.size() > 0)
-        {
+        if (null != locations && null != providerList && providerList.size() > 0) {
             double longitude = locations.getLongitude();
             double latitude = locations.getLatitude();
             getAddress(longitude, latitude);
@@ -579,35 +633,27 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
     }
 
     Marker firstPoint, secondPoint;
-    public void addMarker(LatLng latLng, int type){
+
+    public void addMarker(LatLng latLng, int type) {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        if(type==1)
-        {
+        if (type == 1) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             mCurrLocationMarker = mMap.addMarker(markerOptions);
-        }
-        else if(type==3)
-        {
+        } else if (type == 3) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
             mCurrLocationMarker = mMap.addMarker(markerOptions);
-        }
-        else if(type==4)
-        {
+        } else if (type == 4) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             mCurrLocationMarker = mMap.addMarker(markerOptions);
         }
-        if(type==10)
-        {
+        if (type == 10) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
             firstPoint = mMap.addMarker(markerOptions);
-        }
-        else if(type==11){
+        } else if (type == 11) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
             secondPoint = mMap.addMarker(markerOptions);
-        }
-
-        else if(type==12){
+        } else if (type == 12) {
             try {
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 Marker marker = mMap.addMarker(markerOptions);
@@ -618,16 +664,17 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                         return false;
                     }
                 });
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
 
     }
-    private String address=null;
+
+    private String address = null;
     private double lat, lon;
+
     private void getAddress(double longitude, double latitude) {
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
@@ -638,7 +685,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                 String state = listAddresses.get(0).getAdminArea();
                 String country = listAddresses.get(0).getCountryName();
                 String subLocality = listAddresses.get(0).getSubLocality();
-                address = listAddresses.get(0).getAddressLine(0)+" "+listAddresses.get(0).getSubAdminArea();
+                address = listAddresses.get(0).getAddressLine(0) + " " + listAddresses.get(0).getSubAdminArea();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -648,6 +695,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
     }
+
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -668,6 +716,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             return true;
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -691,8 +740,8 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             }
         }
     }
-    private void sendData()
-    {
+
+    private void sendData() {
         Intent data = new Intent();
         data.putExtra("streetkey", "streetname");
         data.putExtra("LON", lon);
@@ -712,7 +761,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             @Override
             public void onFeatureClick(Feature feature) {
                 Geometry geo = feature.getGeometry();
-                if(geo.getGeometryType().equalsIgnoreCase("Point")) {
+                if (geo.getGeometryType().equalsIgnoreCase("Point")) {
                     Toast.makeText(NewPolygonSplitActivity.this, "Feature clicked: " + feature.getProperty("title"), Toast.LENGTH_SHORT).show();
                     //startActivity(new Intent(PolygonSplitActivity.this, MainActivity.class));
                 }
@@ -722,6 +771,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
     }
 
     GeoJsonLayer geoJsonLayer;
+
     private class DownloadGeoJsonFile extends AsyncTask<String, Void, GeoJsonLayer> {
 
         @Override
@@ -744,8 +794,8 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                 reader.close();
                 stream.close();
 
-                geoJsonLayer =  new GeoJsonLayer(mMap, new JSONObject(result.toString()));
-                return  geoJsonLayer;
+                geoJsonLayer = new GeoJsonLayer(mMap, new JSONObject(result.toString()));
+                return geoJsonLayer;
             } catch (IOException e) {
                 Log.d(TAG, "doInBackground: " + e.getLocalizedMessage());
             } catch (JSONException e) {
@@ -757,8 +807,8 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         @Override
         protected void onPostExecute(GeoJsonLayer layer) {
             if (layer != null) {
-                Log.d(TAG, "onPostExecute: "+layer.toString());
-                 addGeoJsonLayerToMap(geoJsonLayer);
+                Log.d(TAG, "onPostExecute: " + layer.toString());
+                addGeoJsonLayerToMap(geoJsonLayer);
             }
         }
     }
@@ -769,15 +819,14 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             JSONObject jsonFileObject = createJsonFileObject(this.getResources().openRawResource(R.raw.geo));
             polyGonCoordinateList = new ArrayList<>();
             GeoJsonModel geoJsonModel = new Gson().fromJson(jsonFileObject.toString(), GeoJsonModel.class);
-            for(int i=0;i<geoJsonModel.getFeatures().size(); i++) {
+            for (int i = 0; i < geoJsonModel.getFeatures().size(); i++) {
                 GeoJsonFeatureModel geoJsonFeatureModel = geoJsonModel.getFeatures().get(i);
                 Map<String, String> map = (Map<String, String>) geoJsonFeatureModel.getProperties();
                 geoJsonFeatureModel.setPropertiesHashmap(map);
                 geoJsonModel.getFeatures().remove(i);
                 geoJsonModel.getFeatures().add(i, geoJsonFeatureModel);
 
-                if(geoJsonModel.getFeatures().get(i).getGeometry().getType().equalsIgnoreCase("Point"))
-                {
+                if (geoJsonModel.getFeatures().get(i).getGeometry().getType().equalsIgnoreCase("Point")) {
                     GeoJsonGeometryModel geometryModel = geoJsonModel.getFeatures().get(i).getGeometry();
                     double[] coordinates = new double[geometryModel.getCoordinates().length];
                     Object[] values = geometryModel.getCoordinates();
@@ -786,37 +835,35 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                         coordinates[j] = (double) values[j];
 
 
-                    LatLng latLng = new LatLng((double)values[1], (double)values[0]);
+                    LatLng latLng = new LatLng((double) values[1], (double) values[0]);
 
-                   // addMarker(latLng, geoJsonFeatureModel.getPropertiesHashmap(), i);
-                }
-                else if(geoJsonModel.getFeatures().get(i).getGeometry().getType().equalsIgnoreCase("LineString")){
+                    // addMarker(latLng, geoJsonFeatureModel.getPropertiesHashmap(), i);
+                } else if (geoJsonModel.getFeatures().get(i).getGeometry().getType().equalsIgnoreCase("LineString")) {
 
                     GeoJsonGeometryModel geometryModel = geoJsonModel.getFeatures().get(i).getGeometry();
-                    List<Object> d= Arrays.asList(geometryModel.getCoordinates());
+                    List<Object> d = Arrays.asList(geometryModel.getCoordinates());
                     List<LatLng> polygonLatLngList = new ArrayList<>();
 
-                    for (int l=0; l<d.size(); l++) {
+                    for (int l = 0; l < d.size(); l++) {
                         Object bj = d.get(l);
                         List<Object> d3 = (List<Object>) (bj);
-                        LatLng latLng = new LatLng((double)d3.get(1), (double)d3.get(0));
+                        LatLng latLng = new LatLng((double) d3.get(1), (double) d3.get(0));
                         polygonLatLngList.add(latLng);
                     }
                     addPolyLine(polygonLatLngList);
-                }
-                else{
+                } else {
                     GeoJsonGeometryModel geometryModel = geoJsonModel.getFeatures().get(i).getGeometry();
                     List<Object> d = Arrays.asList(geometryModel.getCoordinates());
                     List<LatLng> polygonLatLngList = new ArrayList<>();
                     Object bj = d.get(0);
                     List<List<Object>> d3 = (List<List<Object>>) (bj);
-                    for(int k=0;k<d3.size();k++) {
-                        if(d3.get(k)!=null) {
+                    for (int k = 0; k < d3.size(); k++) {
+                        if (d3.get(k) != null) {
                             Object[] values = d3.get(k).toArray();
                             if (values != null && values[1] != null) {
                                 LatLng latLng = new LatLng((double) values[1], (double) values[0]);
                                 polygonLatLngList.add(latLng);
-                                Log.d(TAG, "retrieveFileFromResource: "+values[1]+" "+values[0]);
+                                Log.d(TAG, "retrieveFileFromResource: " + values[1] + " " + values[0]);
                                 polyGonCoordinateList.add(new Coordinate((double) values[1], (double) values[0]));
                             }
                         }
@@ -861,6 +908,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         // Converts the result string into a JSONObject
         return new JSONObject(result.toString());
     }
+
     private void addPolyLine(List<LatLng> latLngList) {
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                 .clickable(true)
@@ -882,15 +930,16 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             }
         });
     }
+
     List<Coordinate> polyGonCoordinateList;
     LatLngBounds latLngBounds;
-    public void polygon(List<LatLng> latLngList){
+
+    public void polygon(List<LatLng> latLngList) {
         Polygon polygon1 = mMap.addPolygon(new PolygonOptions()
                 .clickable(true)
                 .addAll(latLngList));
 
-        for(int i = 0; i<latLngList.size(); i++)
-        {
+        for (int i = 0; i < latLngList.size(); i++) {
             addMarker(latLngList.get(i), 12);
         }
 
@@ -913,27 +962,25 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         //showText(latLngList);
     }
 
-    public void polygonNew(List<LatLng> latLngList, int type){
-        PolygonOptions polygon2 = new  PolygonOptions()
+    public void polygonNew(List<LatLng> latLngList, int type) {
+        PolygonOptions polygon2 = new PolygonOptions()
                 .clickable(true)
                 .strokeColor(Color.RED)
                 .addAll(latLngList);
-        PolygonOptions polygon3 = new  PolygonOptions()
+        PolygonOptions polygon3 = new PolygonOptions()
                 .clickable(true)
                 .strokeColor(Color.GREEN)
                 .addAll(latLngList);
 
-        if(type==1) {
+        if (type == 1) {
             mMap.addPolygon(polygon2);
-        }
-        else
-        {
+        } else {
             mMap.addPolygon(polygon3);
         }
     }
 
 
-    private  LatLngBounds getPolygonLatLngBounds(final List<LatLng> polygon) {
+    private LatLngBounds getPolygonLatLngBounds(final List<LatLng> polygon) {
         final LatLngBounds.Builder centerBuilder = LatLngBounds.builder();
         for (LatLng point : polygon) {
             centerBuilder.include(point);
@@ -947,18 +994,17 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
     List<CoordinateWithDistanceModel> SecondSplitList;
 
 
-    public  void intersection(double startX, double startY, double endX, double endy) {
+    public void intersection(double startX, double startY, double endX, double endy) {
         // create ring: P1(0,0) - P2(0,10) - P3(10,10) - P4(0,10)
-        Coordinate [] polygonArray = new Coordinate[polyGonCoordinateList.size()];
+        Coordinate[] polygonArray = new Coordinate[polyGonCoordinateList.size()];
         MainDataList = new ArrayList<>();
-        for (int  i=0; i<polyGonCoordinateList.size(); i++)
-        {
+        for (int i = 0; i < polyGonCoordinateList.size(); i++) {
             polygonArray[i] = polyGonCoordinateList.get(i);
         }
         LinearRing lr = new GeometryFactory().createLinearRing(polygonArray);
-      //  LinearRing lr = new GeometryFactory().createLinearRing(new Coordinate[]{new Coordinate(14.171409, 76.641155), new Coordinate(14.160149, 76.640301), new Coordinate(14.160481, 76.660025), new Coordinate(14.172982, 76.660025), new Coordinate(14.171409, 76.641155)});
-      //  LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(13.058320, 77.496023), new Coordinate(13.058171, 77.496626)}); // vertical
-      //  LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(13.058530, 77.496375), new Coordinate(13.058015, 77.496271)}); // horizontal
+        //  LinearRing lr = new GeometryFactory().createLinearRing(new Coordinate[]{new Coordinate(14.171409, 76.641155), new Coordinate(14.160149, 76.640301), new Coordinate(14.160481, 76.660025), new Coordinate(14.172982, 76.660025), new Coordinate(14.171409, 76.641155)});
+        //  LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(13.058320, 77.496023), new Coordinate(13.058171, 77.496626)}); // vertical
+        //  LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(13.058530, 77.496375), new Coordinate(13.058015, 77.496271)}); // horizontal
         LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(startX, startY), new Coordinate(endX, endy)}); // diagnol
 
         // calculate intersection points
@@ -966,41 +1012,38 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         // simple output of points
 
         int intersectingIndex = -1;
-        for (Coordinate c : intersectionPoints.getCoordinates())
-        {
+        for (Coordinate c : intersectionPoints.getCoordinates()) {
             DistanceList = new ArrayList<>();
             int i = 0;
-            int  j = 0;
-            int size =  polyGonCoordinateList.size()-1;
-            for(i=0 ; i<size; i++)
-            {
-                j = i+1;
-                if(j>=size)
-                    j=0;
-                if(lies_on_segment(c.x, c.y, polyGonCoordinateList.get(i).x, polyGonCoordinateList.get(i).y,polyGonCoordinateList.get(j).x, polyGonCoordinateList.get(j).y ))
-                    {
-                        intersectingIndex = i;
-                        CoordinateWithDistanceModel coordinateWithDistanceModel = new CoordinateWithDistanceModel();
-                        coordinateWithDistanceModel.setPos(i);
-                        coordinateWithDistanceModel.setLat(c.x);
-                        coordinateWithDistanceModel.setLng(c.y);
+            int j = 0;
+            int size = polyGonCoordinateList.size() - 1;
+            for (i = 0; i < size; i++) {
+                j = i + 1;
+                if (j >= size)
+                    j = 0;
+                if (lies_on_segment(c.x, c.y, polyGonCoordinateList.get(i).x, polyGonCoordinateList.get(i).y, polyGonCoordinateList.get(j).x, polyGonCoordinateList.get(j).y)) {
+                    intersectingIndex = i;
+                    CoordinateWithDistanceModel coordinateWithDistanceModel = new CoordinateWithDistanceModel();
+                    coordinateWithDistanceModel.setPos(i);
+                    coordinateWithDistanceModel.setLat(c.x);
+                    coordinateWithDistanceModel.setLng(c.y);
 
-                        coordinateWithDistanceModel.setStartx(polyGonCoordinateList.get(i).x);
-                        coordinateWithDistanceModel.setStarty(polyGonCoordinateList.get(i).y);
+                    coordinateWithDistanceModel.setStartx(polyGonCoordinateList.get(i).x);
+                    coordinateWithDistanceModel.setStarty(polyGonCoordinateList.get(i).y);
 
-                        coordinateWithDistanceModel.setEndx(polyGonCoordinateList.get(j).x);
-                        coordinateWithDistanceModel.setEndy(polyGonCoordinateList.get(j).y);
+                    coordinateWithDistanceModel.setEndx(polyGonCoordinateList.get(j).x);
+                    coordinateWithDistanceModel.setEndy(polyGonCoordinateList.get(j).y);
 
-                        //coordinateWithDistanceModel.setDist(distance(c.x, c.y, polyGonCoordinateList.get(j).x, polyGonCoordinateList.get(j).y, 0, 0));
-                        DistanceList.add(coordinateWithDistanceModel);
-                        Log.d(TAG, "intersection: " + polyGonCoordinateList.get(i).x + " " + polyGonCoordinateList.get(i).y + ", " + polyGonCoordinateList.get(j).x + " " + polyGonCoordinateList.get(j).y);
-                        break;
-                    }
+                    //coordinateWithDistanceModel.setDist(distance(c.x, c.y, polyGonCoordinateList.get(j).x, polyGonCoordinateList.get(j).y, 0, 0));
+                    DistanceList.add(coordinateWithDistanceModel);
+                    Log.d(TAG, "intersection: " + polyGonCoordinateList.get(i).x + " " + polyGonCoordinateList.get(i).y + ", " + polyGonCoordinateList.get(j).x + " " + polyGonCoordinateList.get(j).y);
+                    break;
+                }
             }
             MainDistanceDataModel dataModel = new MainDistanceDataModel();
             dataModel.setLat(c.x);
             dataModel.setLng(c.y);
-          //  Collections.sort(DistanceList, CoordinateWithDistanceModel::compareTo);
+            //  Collections.sort(DistanceList, CoordinateWithDistanceModel::compareTo);
             dataModel.setDistanceList(DistanceList);
             MainDataList.add(dataModel);
         }
@@ -1015,28 +1058,26 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         FirstSplitList.add(p1);
         FirstSplitList.add(p2);
         int a = p2.getPos();
-        int size = polyGonCoordinateList.size()-1;
-        if(a>=size)
-            a=0;
-        int l = a+1;
-        if(l>=size)
+        int size = polyGonCoordinateList.size() - 1;
+        if (a >= size)
+            a = 0;
+        int l = a + 1;
+        if (l >= size)
             l = 0;
-        for(int k = a; k<=(size+a); k++){
+        for (int k = a; k <= (size + a); k++) {
             int n = l;
-            if(n>=size)
+            if (n >= size)
                 n = 0;
-            int o = n+1;
-            if(o>=size)
+            int o = n + 1;
+            if (o >= size)
                 o = 0;
             boolean val = lies_on_segment(p1.getLat(), p1.getLng(), polyGonCoordinateList.get(n).x, polyGonCoordinateList.get(n).y, polyGonCoordinateList.get(o).x, polyGonCoordinateList.get(o).y);
-            if(!val){
+            if (!val) {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(n).x);
                 coordinate.setLng(polyGonCoordinateList.get(n).y);
                 FirstSplitList.add(coordinate);
-            }
-            else
-            {
+            } else {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(n).x);
                 coordinate.setLng(polyGonCoordinateList.get(n).y);
@@ -1047,34 +1088,31 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             l = o;
         }
 
-        List<LatLng> FSplitLtLnlist  = new ArrayList<>();
-        List<LatLng> SSplitLtLnlist  = new ArrayList<>();
+        List<LatLng> FSplitLtLnlist = new ArrayList<>();
+        List<LatLng> SSplitLtLnlist = new ArrayList<>();
 
-        for (int m = 0; m<FirstSplitList.size(); m++)
-        {
+        for (int m = 0; m < FirstSplitList.size(); m++) {
             FSplitLtLnlist.add(new LatLng(FirstSplitList.get(m).getLat(), FirstSplitList.get(m).getLng()));
-            Log.d(TAG, "First Split: "+(m+1)+"-"+FirstSplitList.get(m).getLat()+","+FirstSplitList.get(m).getLng());
+            Log.d(TAG, "First Split: " + (m + 1) + "-" + FirstSplitList.get(m).getLat() + "," + FirstSplitList.get(m).getLng());
         }
 
         SecondSplitList.add(p1);
         SecondSplitList.add(p2);
-       int b = p2.getPos();
-        int c = b-1;
-        if(b==0)
-            c = size-1;
-        if(c<0)
-            c = size -1;
+        int b = p2.getPos();
+        int c = b - 1;
+        if (b == 0)
+            c = size - 1;
+        if (c < 0)
+            c = size - 1;
 
-        for(int k = size; k>=0; k--){
+        for (int k = size; k >= 0; k--) {
             boolean val = lies_on_segment(p1.getLat(), p1.getLng(), polyGonCoordinateList.get(b).x, polyGonCoordinateList.get(b).y, polyGonCoordinateList.get(c).x, polyGonCoordinateList.get(c).y);
-            if(!val){
+            if (!val) {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(b).x);
                 coordinate.setLng(polyGonCoordinateList.get(b).y);
                 SecondSplitList.add(coordinate);
-            }
-            else
-            {
+            } else {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(b).x);
                 coordinate.setLng(polyGonCoordinateList.get(b).y);
@@ -1083,17 +1121,16 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                 break;
             }
             b = c;
-            if(b==0)
-                c = size-1;
-            c = b-1;
-            if(c<0)
-                c = size -1;
+            if (b == 0)
+                c = size - 1;
+            c = b - 1;
+            if (c < 0)
+                c = size - 1;
         }
 
-        for (int m = 0; m<SecondSplitList.size(); m++)
-        {
+        for (int m = 0; m < SecondSplitList.size(); m++) {
             SSplitLtLnlist.add(new LatLng(SecondSplitList.get(m).getLat(), SecondSplitList.get(m).getLng()));
-            Log.d(TAG, "Second Split: "+(m+1)+"-"+SecondSplitList.get(m).getLat()+","+SecondSplitList.get(m).getLng());
+            Log.d(TAG, "Second Split: " + (m + 1) + "-" + SecondSplitList.get(m).getLat() + "," + SecondSplitList.get(m).getLng());
         }
         mMap.clear();
         addMarker(new LatLng(startX, startY), 1);
@@ -1105,7 +1142,7 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
     }
 
 
-    public  LatLng findNextPoint(double bearing, double distance, double lat, double lon) {
+    public LatLng findNextPoint(double bearing, double distance, double lat, double lon) {
         double R = 6378.1;  //Radius of the Earth
         double brng = Math.toRadians(bearing);  //Bearing is 90 degrees converted to radians.
         double d = distance;  //Distance in km
@@ -1116,11 +1153,11 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         double lat1 = Math.toRadians(lat); //Current lat point converted to radians
         double lon1 = Math.toRadians(lon); //Current long point converted to radians
 
-        lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) +
-                Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng));
+        lat2 = Math.asin(Math.sin(lat1) * Math.cos(d / R) +
+                Math.cos(lat1) * Math.sin(d / R) * Math.cos(brng));
 
-        lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1),
-                Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
+        lon2 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(lat1),
+                Math.cos(d / R) - Math.sin(lat1) * Math.sin(lat2));
 
         lat2 = Math.toDegrees(lat2);
         lon2 = Math.toDegrees(lon2);
@@ -1130,20 +1167,21 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         addMarker(latLng, 12);
         return latLng;
     }
-    public  double calculateDirection(double srcLat, double srcLon, double destLat, double destLon) {
+
+    public double calculateDirection(double srcLat, double srcLon, double destLat, double destLon) {
         double λ1 = srcLon, λ2 = destLon;
         double φ1 = srcLat, φ2 = destLat;
 
-        System.out.println("φ1:"+φ1+" φ2:"+φ2);
+        System.out.println("φ1:" + φ1 + " φ2:" + φ2);
 
-        double dif = Math.abs(λ2-λ1);
-        System.out.println("Diff:"+dif);
-        double y = Math.sin(dif*Math.PI/180) * Math.cos(φ2*Math.PI/180);
+        double dif = Math.abs(λ2 - λ1);
+        System.out.println("Diff:" + dif);
+        double y = Math.sin(dif * Math.PI / 180) * Math.cos(φ2 * Math.PI / 180);
 
-        double rad = φ1*Math.PI/180;
-        System.out.println("1=" + Math.cos(rad)+" 2="+Math.sin(φ2));
+        double rad = φ1 * Math.PI / 180;
+        System.out.println("1=" + Math.cos(rad) + " 2=" + Math.sin(φ2));
 
-        double x = Math.cos(φ1*Math.PI/180) * Math.sin(φ2*Math.PI/180) - Math.sin(φ1*Math.PI/180) * Math.cos(φ2*Math.PI/180) * Math.cos(dif*Math.PI/180);
+        double x = Math.cos(φ1 * Math.PI / 180) * Math.sin(φ2 * Math.PI / 180) - Math.sin(φ1 * Math.PI / 180) * Math.cos(φ2 * Math.PI / 180) * Math.cos(dif * Math.PI / 180);
 
         System.out.println("Y=" + y);
         System.out.println("X=" + x);
@@ -1158,20 +1196,19 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
 
     }
 
-
-    public LinearRing makeLineRing(){
-        Coordinate [] polygonArray = new Coordinate[polyGonCoordinateList.size()];
-        for (int  i=0; i<polyGonCoordinateList.size(); i++)
-        {
+    public LinearRing makeLineRing() {
+        Coordinate[] polygonArray = new Coordinate[polyGonCoordinateList.size()];
+        for (int i = 0; i < polyGonCoordinateList.size(); i++) {
             polygonArray[i] = polyGonCoordinateList.get(i);
         }
         return new GeometryFactory().createLinearRing(polygonArray);
     }
-    public com.vividsolutions.jts.geom.Geometry getInteresectionPoints(LinearRing lr, LineString ls){
+
+    public com.vividsolutions.jts.geom.Geometry getInteresectionPoints(LinearRing lr, LineString ls) {
         return lr.intersection(ls);
     }
 
-    public void checkLineCrossingPolygonOrNot(){
+    public void checkLineCrossingPolygonOrNot() {
         LinearRing lr = makeLineRing();
         List<CoordinateWithDistanceModel> SplitPolygonCoordinateList = new ArrayList<>();
         int NoOfIntersectionPoints = 0;
@@ -1179,168 +1216,155 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
         CoordinateWithDistanceModel vertex = new CoordinateWithDistanceModel();
         vertex.setLat(13.058400353854454);
         vertex.setLng(77.49632477760315);
-       // vertexList.add(vertex);
+        // vertexList.add(vertex);
         addMarker(new LatLng(vertex.getLat(), vertex.getLng()), 3);
 
         CoordinateWithDistanceModel vertex2 = new CoordinateWithDistanceModel();
         vertex2.setLat(13.05830008579915);
         vertex2.setLng(77.4963066726923);
-       // vertexList.add(vertex2);
+        // vertexList.add(vertex2);
         addMarker(new LatLng(vertex2.getLat(), vertex2.getLng()), 3);
 
 
         CoordinateWithDistanceModel vertex5 = new CoordinateWithDistanceModel();
         vertex5.setLat(13.058253);
         vertex5.setLng(77.496376);
-       // vertexList.add(vertex5);
+        // vertexList.add(vertex5);
         addMarker(new LatLng(vertex5.getLat(), vertex5.getLng()), 3);
 
         CoordinateWithDistanceModel vertex6 = new CoordinateWithDistanceModel();
         vertex6.setLat(13.058221);
         vertex6.setLng(77.496396);
-      //  vertexList.add(vertex6);
+        //  vertexList.add(vertex6);
         addMarker(new LatLng(vertex6.getLat(), vertex6.getLng()), 3);
 
 
         CoordinateWithDistanceModel vertex3 = new CoordinateWithDistanceModel();
         vertex3.setLat(13.058178);
         vertex3.setLng(77.496347);
-      //  vertexList.add(vertex3);
+        //  vertexList.add(vertex3);
         addMarker(new LatLng(vertex3.getLat(), vertex3.getLng()), 3);
 
         CoordinateWithDistanceModel vertex4 = new CoordinateWithDistanceModel();
         vertex4.setLat(13.05802965579237);
         vertex4.setLng(77.49625872820617);
-       // vertexList.add(vertex4);
+        // vertexList.add(vertex4);
         addMarker(new LatLng(vertex4.getLat(), vertex4.getLng()), 3);
 
-        for(int i =0; i<vertexList.size()-1; i++)
-                {
-                    double lat1 = vertexList.get(i).getLat();
-                    double lon1 = vertexList.get(i).getLng();
+        for (int i = 0; i < vertexList.size() - 1; i++) {
+            double lat1 = vertexList.get(i).getLat();
+            double lon1 = vertexList.get(i).getLng();
 
-                    double lat2 = vertexList.get(i+1).getLat();
-                    double lon2 = vertexList.get(i+1).getLng();
+            double lat2 = vertexList.get(i + 1).getLat();
+            double lon2 = vertexList.get(i + 1).getLng();
 
-                    LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(lat1, lon1), new Coordinate(lat2, lon2)}); // horizontal
-                    Log.d(TAG, "checkLineCrossingPolygonOrNot: "+lat1+" "+lon1+", "+lat2+" "+lon2);
-                    com.vividsolutions.jts.geom.Geometry intersectionPoints = lr.intersection(ls);
-                    if(intersectionPoints.getCoordinates().length==1)
-                    {
-                        int k = 0;
-                        int  l = 0;
-                        int size =  polyGonCoordinateList.size()-1;
-                        Log.d(TAG, "polyGonCoordinateList: "+polyGonCoordinateList.get(0).x+" "+polyGonCoordinateList.get(0).y);
-                        for(k=0 ; k<size; k++) {
-                            l = k + 1;
-                            if (l >= size)
-                                l = 0;
-                            if (lies_on_segment(intersectionPoints.getCoordinates()[0].x, intersectionPoints.getCoordinates()[0].y, polyGonCoordinateList.get(k).x, polyGonCoordinateList.get(k).y, polyGonCoordinateList.get(l).x, polyGonCoordinateList.get(l).y)) {
-                                NoOfIntersectionPoints++;
-                                if(NoOfIntersectionPoints==1)
-                                {
-                                    CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
-                                    withDistanceModel.setLat(intersectionPoints.getCoordinates()[0].x);
-                                    withDistanceModel.setLng(intersectionPoints.getCoordinates()[0].y);
-                                    withDistanceModel.setPos(k);
-                                    SplitPolygonCoordinateList.add(0, withDistanceModel);
-                                }
-                                if(NoOfIntersectionPoints>=2)
-                                {
-                                    CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
-                                    withDistanceModel.setLat(intersectionPoints.getCoordinates()[0].x);
-                                    withDistanceModel.setLng(intersectionPoints.getCoordinates()[0].y);
-                                    withDistanceModel.setPos(k);
-                                    SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel);
-                                }
-                                break;
-                            }
+            LineString ls = new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(lat1, lon1), new Coordinate(lat2, lon2)}); // horizontal
+            Log.d(TAG, "checkLineCrossingPolygonOrNot: " + lat1 + " " + lon1 + ", " + lat2 + " " + lon2);
+            com.vividsolutions.jts.geom.Geometry intersectionPoints = lr.intersection(ls);
+            if (intersectionPoints.getCoordinates().length == 1) {
+                int k = 0;
+                int l = 0;
+                int size = polyGonCoordinateList.size() - 1;
+                Log.d(TAG, "polyGonCoordinateList: " + polyGonCoordinateList.get(0).x + " " + polyGonCoordinateList.get(0).y);
+                for (k = 0; k < size; k++) {
+                    l = k + 1;
+                    if (l >= size)
+                        l = 0;
+                    if (lies_on_segment(intersectionPoints.getCoordinates()[0].x, intersectionPoints.getCoordinates()[0].y, polyGonCoordinateList.get(k).x, polyGonCoordinateList.get(k).y, polyGonCoordinateList.get(l).x, polyGonCoordinateList.get(l).y)) {
+                        NoOfIntersectionPoints++;
+                        if (NoOfIntersectionPoints == 1) {
+                            CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
+                            withDistanceModel.setLat(intersectionPoints.getCoordinates()[0].x);
+                            withDistanceModel.setLng(intersectionPoints.getCoordinates()[0].y);
+                            withDistanceModel.setPos(k);
+                            SplitPolygonCoordinateList.add(0, withDistanceModel);
                         }
-
-
-                        Log.d(TAG, "checkLineCrossingPolygonOrNot: " + intersectionPoints.getCoordinates()[0].x + "," + intersectionPoints.getCoordinates()[0].y);
-                        addMarker(new LatLng(intersectionPoints.getCoordinates()[0].x, intersectionPoints.getCoordinates()[0].y), 4);
-                        Log.d(TAG, "checkLineCrossingPolygonOrNot position:" + i + ":size: " + intersectionPoints.getCoordinates().length);
-                    }
-                    else if(intersectionPoints.getCoordinates().length==2)
-                    {
-                        CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
-                        withDistanceModel.setLat(intersectionPoints.getCoordinates()[0].x);
-                        withDistanceModel.setLng(intersectionPoints.getCoordinates()[0].y);
-                        withDistanceModel.setPos(i);
-                        SplitPolygonCoordinateList.add(0, withDistanceModel);
-
-                        CoordinateWithDistanceModel withDistanceModel2 = new CoordinateWithDistanceModel();
-                        withDistanceModel2.setLat(intersectionPoints.getCoordinates()[1].x);
-                        withDistanceModel2.setLng(intersectionPoints.getCoordinates()[1].y);
-                        withDistanceModel2.setPos(i+1);
-                        SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel2);
-                    }
-                    else
-                    {
-                        CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
-                        withDistanceModel.setLat(lat1);
-                        withDistanceModel.setLng(lon1);
-                        withDistanceModel.setPos(i);
-                        if(NoOfIntersectionPoints==1)
-                        {
+                        if (NoOfIntersectionPoints >= 2) {
+                            CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
+                            withDistanceModel.setLat(intersectionPoints.getCoordinates()[0].x);
+                            withDistanceModel.setLng(intersectionPoints.getCoordinates()[0].y);
+                            withDistanceModel.setPos(k);
                             SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel);
-                            CoordinateWithDistanceModel withDistanceModel2 = new CoordinateWithDistanceModel();
-                            withDistanceModel2.setLat(lat2);
-                            withDistanceModel2.setLng(lon2);
-                            withDistanceModel2.setPos(i+1);
-                            SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel2);
-                            Log.d(TAG, "checkLineCrossingPolygonOrNot: intersecting");
                         }
-                        else if(NoOfIntersectionPoints>=2){
-                            SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size()-1, withDistanceModel);
-                            CoordinateWithDistanceModel withDistanceModel2 = new CoordinateWithDistanceModel();
-                            withDistanceModel2.setLat(lat2);
-                            withDistanceModel2.setLng(lon2);
-                            withDistanceModel2.setPos(i+1);
-                            SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size()-1, withDistanceModel2);
-                            Log.d(TAG, "checkLineCrossingPolygonOrNot: intersecting");
-                        }
-                        else {
-                            Log.d(TAG, "checkLineCrossingPolygonOrNot: not intersecting " + i + " and " + (i + 1));
-                        }
+                        break;
                     }
                 }
+
+
+                Log.d(TAG, "checkLineCrossingPolygonOrNot: " + intersectionPoints.getCoordinates()[0].x + "," + intersectionPoints.getCoordinates()[0].y);
+                addMarker(new LatLng(intersectionPoints.getCoordinates()[0].x, intersectionPoints.getCoordinates()[0].y), 4);
+                Log.d(TAG, "checkLineCrossingPolygonOrNot position:" + i + ":size: " + intersectionPoints.getCoordinates().length);
+            } else if (intersectionPoints.getCoordinates().length == 2) {
+                CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
+                withDistanceModel.setLat(intersectionPoints.getCoordinates()[0].x);
+                withDistanceModel.setLng(intersectionPoints.getCoordinates()[0].y);
+                withDistanceModel.setPos(i);
+                SplitPolygonCoordinateList.add(0, withDistanceModel);
+
+                CoordinateWithDistanceModel withDistanceModel2 = new CoordinateWithDistanceModel();
+                withDistanceModel2.setLat(intersectionPoints.getCoordinates()[1].x);
+                withDistanceModel2.setLng(intersectionPoints.getCoordinates()[1].y);
+                withDistanceModel2.setPos(i + 1);
+                SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel2);
+            } else {
+                CoordinateWithDistanceModel withDistanceModel = new CoordinateWithDistanceModel();
+                withDistanceModel.setLat(lat1);
+                withDistanceModel.setLng(lon1);
+                withDistanceModel.setPos(i);
+                if (NoOfIntersectionPoints == 1) {
+                    SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel);
+                    CoordinateWithDistanceModel withDistanceModel2 = new CoordinateWithDistanceModel();
+                    withDistanceModel2.setLat(lat2);
+                    withDistanceModel2.setLng(lon2);
+                    withDistanceModel2.setPos(i + 1);
+                    SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size(), withDistanceModel2);
+                    Log.d(TAG, "checkLineCrossingPolygonOrNot: intersecting");
+                } else if (NoOfIntersectionPoints >= 2) {
+                    SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size() - 1, withDistanceModel);
+                    CoordinateWithDistanceModel withDistanceModel2 = new CoordinateWithDistanceModel();
+                    withDistanceModel2.setLat(lat2);
+                    withDistanceModel2.setLng(lon2);
+                    withDistanceModel2.setPos(i + 1);
+                    SplitPolygonCoordinateList.add(SplitPolygonCoordinateList.size() - 1, withDistanceModel2);
+                    Log.d(TAG, "checkLineCrossingPolygonOrNot: intersecting");
+                } else {
+                    Log.d(TAG, "checkLineCrossingPolygonOrNot: not intersecting " + i + " and " + (i + 1));
+                }
+            }
+        }
         List<LatLng> latLngList = new ArrayList<>();
-        for(int i = 0; i<SplitPolygonCoordinateList.size(); i++) {
+        for (int i = 0; i < SplitPolygonCoordinateList.size(); i++) {
             latLngList.add(new LatLng(SplitPolygonCoordinateList.get(i).getLat(), SplitPolygonCoordinateList.get(i).getLng()));
         }
-        Log.d(TAG, "checkLineCrossingPolygonOrNot: size:"+SplitPolygonCoordinateList.size());
+        Log.d(TAG, "checkLineCrossingPolygonOrNot: size:" + SplitPolygonCoordinateList.size());
         addPolyLine(latLngList);
 
         CoordinateWithDistanceModel p1 = SplitPolygonCoordinateList.get(0);
-        CoordinateWithDistanceModel p2 =SplitPolygonCoordinateList.get(SplitPolygonCoordinateList.size()-1);
+        CoordinateWithDistanceModel p2 = SplitPolygonCoordinateList.get(SplitPolygonCoordinateList.size() - 1);
 
-       FirstSplitList = new ArrayList<>();
-       FirstSplitList.addAll(SplitPolygonCoordinateList);
+        FirstSplitList = new ArrayList<>();
+        FirstSplitList.addAll(SplitPolygonCoordinateList);
         int a = p2.getPos();
-        int size = polyGonCoordinateList.size()-1;
-        if(a>=size)
-            a=0;
-        int l = a+1;
-        if(l>=size)
+        int size = polyGonCoordinateList.size() - 1;
+        if (a >= size)
+            a = 0;
+        int l = a + 1;
+        if (l >= size)
             l = 0;
-        for(int k = a; k<=(size+a); k++){
+        for (int k = a; k <= (size + a); k++) {
             int n = l;
-            if(n>=size)
+            if (n >= size)
                 n = 0;
-            int o = n+1;
-            if(o>=size)
+            int o = n + 1;
+            if (o >= size)
                 o = 0;
             boolean val = lies_on_segment(p1.getLat(), p1.getLng(), polyGonCoordinateList.get(n).x, polyGonCoordinateList.get(n).y, polyGonCoordinateList.get(o).x, polyGonCoordinateList.get(o).y);
-            if(!val){
+            if (!val) {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(n).x);
                 coordinate.setLng(polyGonCoordinateList.get(n).y);
                 FirstSplitList.add(coordinate);
-            }
-            else
-            {
+            } else {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(n).x);
                 coordinate.setLng(polyGonCoordinateList.get(n).y);
@@ -1351,34 +1375,31 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
             l = o;
         }
 
-        List<LatLng> FSplitLtLnlist  = new ArrayList<>();
-        List<LatLng> SSplitLtLnlist  = new ArrayList<>();
+        List<LatLng> FSplitLtLnlist = new ArrayList<>();
+        List<LatLng> SSplitLtLnlist = new ArrayList<>();
 
-        for (int m = 0; m<FirstSplitList.size(); m++)
-        {
+        for (int m = 0; m < FirstSplitList.size(); m++) {
             FSplitLtLnlist.add(new LatLng(FirstSplitList.get(m).getLat(), FirstSplitList.get(m).getLng()));
-            Log.d(TAG, "First Split: "+(m+1)+"-"+FirstSplitList.get(m).getLat()+","+FirstSplitList.get(m).getLng());
+            Log.d(TAG, "First Split: " + (m + 1) + "-" + FirstSplitList.get(m).getLat() + "," + FirstSplitList.get(m).getLng());
         }
 
         SecondSplitList = new ArrayList<>();
         SecondSplitList.addAll(SplitPolygonCoordinateList);
         int b = p2.getPos();
-        int c = b-1;
-        if(b==0)
-            c = size-1;
-        if(c<0)
-            c = size -1;
+        int c = b - 1;
+        if (b == 0)
+            c = size - 1;
+        if (c < 0)
+            c = size - 1;
 
-        for(int k = size; k>=0; k--){
+        for (int k = size; k >= 0; k--) {
             boolean val = lies_on_segment(p1.getLat(), p1.getLng(), polyGonCoordinateList.get(b).x, polyGonCoordinateList.get(b).y, polyGonCoordinateList.get(c).x, polyGonCoordinateList.get(c).y);
-            if(!val){
+            if (!val) {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(b).x);
                 coordinate.setLng(polyGonCoordinateList.get(b).y);
                 SecondSplitList.add(coordinate);
-            }
-            else
-            {
+            } else {
                 CoordinateWithDistanceModel coordinate = new CoordinateWithDistanceModel();
                 coordinate.setLat(polyGonCoordinateList.get(b).x);
                 coordinate.setLng(polyGonCoordinateList.get(b).y);
@@ -1387,22 +1408,21 @@ public class NewPolygonSplitActivity extends FragmentActivity implements OnMapRe
                 break;
             }
             b = c;
-            if(b==0)
-                c = size-1;
-            c = b-1;
-            if(c<0)
-                c = size -1;
+            if (b == 0)
+                c = size - 1;
+            c = b - 1;
+            if (c < 0)
+                c = size - 1;
         }
-        for (int m = 0; m<SecondSplitList.size(); m++)
-        {
+        for (int m = 0; m < SecondSplitList.size(); m++) {
             SSplitLtLnlist.add(new LatLng(SecondSplitList.get(m).getLat(), SecondSplitList.get(m).getLng()));
-            Log.d(TAG, "Second Split: "+(m+1)+"-"+SecondSplitList.get(m).getLat()+","+SecondSplitList.get(m).getLng());
+            Log.d(TAG, "Second Split: " + (m + 1) + "-" + SecondSplitList.get(m).getLat() + "," + SecondSplitList.get(m).getLng());
         }
         mMap.clear();
         //  addMarker(new LatLng(startX, startY), 1);
         // addMarker(new LatLng(endX, endy), 1);
-       // addMarker(new LatLng(p1.getLat(), p1.getLng()), 2);
-       // addMarker(new LatLng(p2.getLat(), p2.getLng()), 2);
+        // addMarker(new LatLng(p1.getLat(), p1.getLng()), 2);
+        // addMarker(new LatLng(p2.getLat(), p2.getLng()), 2);
         polygonNew(FSplitLtLnlist, 1);
         polygonNew(SSplitLtLnlist, 2);
 
