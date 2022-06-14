@@ -118,6 +118,9 @@ public class SampleTestActivity extends AppCompatActivity {
                 intent.putParcelableArrayListExtra("Coordinates", (ArrayList<? extends Parcelable>) polygonCoordinatesList);
                 intent.putParcelableArrayListExtra("Vertices", (ArrayList<? extends Parcelable>) verticesList);
                 startActivityForResult(intent, 2000);
+                Map<String, List<LatLng>> data =  Utils.checkLineCrossingPolygonOrNot(polygonCoordinatesList, verticesList);
+                List<LatLng> first = data.get("First");
+                List<LatLng> second = data.get("Second");
             }
         });
 
