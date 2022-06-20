@@ -239,4 +239,56 @@ public class Utils {
             return false;
     }
 
+
+    public static LatLng findPointByDistance(int dist, LatLng latLng1, LatLng latLng2){
+        List<LatLng> finalPoints = new ArrayList<>();
+        double totalDistnacebtwnPoint = meters(latLng1.latitude, latLng1.longitude, latLng2.latitude, latLng2.longitude);
+        double fraction = (double) dist/totalDistnacebtwnPoint;
+        LatLng latLng = IntermediatePoint(latLng1.latitude, latLng1.longitude, latLng2.latitude, latLng2.longitude, fraction);
+         if (finalPoints.size() == 0) {
+            finalPoints.add(latLng1);
+            finalPoints.add(latLng);
+        } else {
+            finalPoints.add(latLng);
+            finalPoints.add(latLng1);
+        }
+        return latLng;
+    }
+
+    private static final double r2d = 180.0D / 3.141592653589793D;
+    private static final double d2r = 3.141592653589793D / 180.0D;
+    private static final double d2km = 111189.57696D * r2d;
+    public static double meters(double lt1, double ln1, double lt2, double ln2) {
+        double x = lt1 * d2r;
+        double y = lt2 * d2r;
+        return Math.acos( Math.sin(x) * Math.sin(y) + Math.cos(x) * Math.cos(y) * Math.cos(d2r * (ln1 - ln2))) * d2km;
+    }
+    public static LatLng IntermediatePoint(double lat1, double lon1, double lat2, double lon2, double fraction) {
+        double φ1 = Math.toRadians(lat1), λ1 = Math.toRadians(lon1);
+        double φ2 = Math.toRadians(lat2), λ2 = Math.toRadians(lon2);
+        // distance between points
+        double Δφ = φ2 - φ1;
+        double Δλ = λ2 - λ1;
+        double a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2)
+                + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        double δ = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double A = Math.sin((1 - fraction) * δ) / Math.sin(δ);
+        double B = Math.sin(fraction * δ) / Math.sin(δ);
+
+        double x = A * Math.cos(φ1) * Math.cos(λ1) + B * Math.cos(φ2) * Math.cos(λ2);
+        double y = A * Math.cos(φ1) * Math.sin(λ1) + B * Math.cos(φ2) * Math.sin(λ2);
+        double z = A * Math.sin(φ1) + B * Math.sin(φ2);
+
+        double φ3 = Math.atan2(z, Math.sqrt(x * x + y * y));
+        double λ3 = Math.atan2(y, x);
+
+        double lat = Math.toDegrees(φ3);
+        double lon = Math.toDegrees(λ3);
+        System.out.println("Intermediate Lat:" + lat + "," + lon);
+        return new LatLng(lat, lon);
+
+    }
+
+
 }

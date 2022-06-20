@@ -3,6 +3,7 @@
     package="com.ksrsac.photolatlng">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -16,7 +17,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".SampleTestActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.PhotoLatLng">
           <!--  <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
