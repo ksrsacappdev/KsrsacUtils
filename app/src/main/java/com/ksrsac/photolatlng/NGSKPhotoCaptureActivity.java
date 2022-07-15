@@ -228,8 +228,7 @@ public class NGSKPhotoCaptureActivity extends AppCompatActivity implements Activ
         float azimuth_angle = event.values[0];
         float pitch_angle = event.values[1];
         float roll_angle = event.values[2];
-
-       textViewAzimuth.setText("Azimuth\n"+String.valueOf(azimuth_angle));
+        textViewAzimuth.setText("Azimuth\n"+String.valueOf(azimuth_angle));
         textViewPitch.setText("pitch\n"+String.valueOf(pitch_angle));
         textViewRoll.setText("Roll\n"+String.valueOf(roll_angle));
 
