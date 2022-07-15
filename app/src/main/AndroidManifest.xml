@@ -36,10 +36,19 @@
         <activity android:name=".PolygonSplitLibraryActivity">
 
         </activity>
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PhotoLatLng">
+         <!--   <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
         <activity android:name=".GridCodeGenerationActivity" />
         <activity
             android:name=".PhotoCaptureActivity"
+            android:theme="@style/Theme.PhotoLatLng"
             android:exported="true">
             <intent-filter>
                 <action android:name="my.package.action.MY_ACTION" />
@@ -48,12 +57,23 @@
             </intent-filter>
         </activity>
 
-      <!--  <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDOhgymTs-2unv5YYxTc3hFPR&#45;&#45;n1kZsA8" />-->
+
+        <activity
+            android:name=".NGSKPhotoCaptureActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="my.package.action.MY_ACTION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--  <meta-data
+              android:name="com.google.android.gms.version"
+              android:value="@integer/google_play_services_version" />
+          <meta-data
+              android:name="com.google.android.maps.v2.API_KEY"
+              android:value="AIzaSyDOhgymTs-2unv5YYxTc3hFPR&#45;&#45;n1kZsA8" />-->
     </application>
 
 </manifest>
