@@ -88,7 +88,8 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
          height = displayMetrics.heightPixels;
-         width = displayMetrics.widthPixels;
+        // width = displayMetrics.widthPixels;
+        width = 2048;
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {

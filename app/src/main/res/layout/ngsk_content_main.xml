@@ -58,6 +58,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="Latitude"
+                    android:textSize="20sp"
                     android:visibility="visible" />
                 <TextView
                     android:id="@+id/time"
@@ -65,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="time"
+                    android:textSize="20sp"
                     android:visibility="visible" />
 
                 <TextView
@@ -73,6 +75,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="pitch"
+                    android:textSize="20sp"
                     android:visibility="visible" />
 
                 <TextView
@@ -81,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="Roll"
+                    android:textSize="20sp"
                     android:visibility="visible" />
 
 
@@ -105,6 +109,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="Latitude"
+                    android:textSize="20sp"
                     android:visibility="visible" />
                 <TextView
                     android:id="@+id/altitude"
@@ -112,6 +117,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="altitude"
+                    android:textSize="20sp"
                     android:visibility="visible" />
 
                 <TextView
@@ -120,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="azimuth"
+                    android:textSize="20sp"
                     android:visibility="visible" />
 
                 <TextView
@@ -127,6 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
+                    android:textSize="20sp"
                     android:text="Proposal ID"
                     android:visibility="visible" />
 
