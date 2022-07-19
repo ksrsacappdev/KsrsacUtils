@@ -111,23 +111,7 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
             ccv2WithoutPreview = new CameraControllerV2WithoutPreview(getApplicationContext());
             startstoppreview.setChecked(false);
         }
-    /*    startstoppreview.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                if(startstoppreview.isChecked()) {
-                    intent.putExtra("showpreview", true);
-                    finish();
-                    startActivity(intent);
-
-                } else {
-                    intent.putExtra("showpreview", false);
-                    finish();
-                    startActivity(intent);
-                }
-            }
-        });
-*/
-        findViewById(R.id.getpicture).setOnClickListener(new View.OnClickListener(){
+      findViewById(R.id.getpicture).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 if(startstoppreview.isChecked() && ccv2WithPreview != null) {
@@ -142,7 +126,6 @@ public class PhotoCaptureActivity extends AppCompatActivity implements ActivityC
                 Toast.makeText(getApplicationContext(), "Picture Clicked", Toast.LENGTH_SHORT).show();
             }
         });
-
         getPermissions();
     }
 
