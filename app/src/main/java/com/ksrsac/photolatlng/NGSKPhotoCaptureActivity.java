@@ -78,7 +78,7 @@ public class NGSKPhotoCaptureActivity extends AppCompatActivity implements Activ
         df.setMaximumFractionDigits(7);
 
         String str_proposal_id = getIntent().getStringExtra("PROP_ID");
-        String workName = getIntent().getStringExtra("PROP_ID");
+        String workName = getIntent().getStringExtra("WorkName");
         if(workName==null || workName.isEmpty())
             workName = "Work Name";
 
