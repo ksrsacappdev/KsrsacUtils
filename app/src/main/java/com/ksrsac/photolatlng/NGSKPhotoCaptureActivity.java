@@ -37,6 +37,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -52,35 +53,39 @@ public class NGSKPhotoCaptureActivity extends AppCompatActivity implements Activ
     private static final int REQUEST_LOCATION = 1;
     LocationManager locationManager;
     String latitude, longitude;
-    private TextView latText, lonText, timeText, altText, proposal_id ;
+    private TextView latText, timeText, mTextViewWorkName, proposal_id ;
     GPSTracker gpsTracker;
     int height, width;
     private File mFile;
     private SensorManager mSensorManager;
     private Sensor mOrientation;
 
-    private TextView textViewPitch, textViewRoll, textViewAzimuth;
+    // private TextView textViewPitch, textViewRoll, textViewAzimuth;
     private ProgressBar mProgressBar;
-
+    DecimalFormat df = new DecimalFormat();
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ngsk_activity_photocapture);
-        latText = findViewById(R.id.latitude);
-        lonText = findViewById(R.id.longitude);
-        timeText = findViewById(R.id.time);
+
         mProgressBar = findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.GONE);
-        altText = findViewById(R.id.altitude);
-        textViewPitch = findViewById(R.id.pitch);
-        textViewRoll = findViewById(R.id.roll);
-        textViewAzimuth = findViewById(R.id.azimuth);
-        proposal_id = findViewById(R.id.proposal_id);
+        latText = findViewById(R.id.latitude);
+        timeText = findViewById(R.id.time);
+        proposal_id = findViewById(R.id.tv_id);
+        mTextViewWorkName = findViewById(R.id.work_name);
+        df.setMaximumFractionDigits(7);
+
         String str_proposal_id = getIntent().getStringExtra("PROP_ID");
+        String workName = getIntent().getStringExtra("PROP_ID");
+        if(workName==null || workName.isEmpty())
+            workName = "Work Name";
+
         if(str_proposal_id==null|| str_proposal_id.isEmpty())
             str_proposal_id = "Prop_ID";
         proposal_id.setText(str_proposal_id);
+        mTextViewWorkName.setText(workName);
         get_location_data();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensorList  =
@@ -145,7 +150,11 @@ public class NGSKPhotoCaptureActivity extends AppCompatActivity implements Activ
                     ccv2WithPreview.takePicture(getBitmapFromView(frameLayoutView),mFile);
                 } else if(ccv2WithoutPreview != null){
                     ccv2WithoutPreview.openCamera();
-                    try { Thread.sleep(20); } catch (InterruptedException e) {}
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     ccv2WithoutPreview.takePicture();
                 }
                 mProgressBar.setVisibility(View.VISIBLE);
@@ -218,21 +227,19 @@ public class NGSKPhotoCaptureActivity extends AppCompatActivity implements Activ
     }
 
     private void setLatLong(Location locationGPS) {
-        latText.setText(locationGPS.getLatitude()+"");
-        lonText.setText(locationGPS.getLongitude()+"");
-        altText.setText("Altitude:\n"+locationGPS.getAltitude()+"");
+        latText.setText("Lat:"+df.format(locationGPS.getLatitude())+", Lon:"+df.format(locationGPS.getLongitude()));
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        timeText.setText("Date & Time:\n"+ sdf.format(date) );
+        timeText.setText("Date & Time:"+ sdf.format(date) );
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
         float azimuth_angle = event.values[0];
         float pitch_angle = event.values[1];
         float roll_angle = event.values[2];
-        textViewAzimuth.setText("Azimuth\n"+String.valueOf(azimuth_angle));
-        textViewPitch.setText("pitch\n"+String.valueOf(pitch_angle));
-        textViewRoll.setText("Roll\n"+String.valueOf(roll_angle));
+       // textViewAzimuth.setText("Azimuth\n"+String.valueOf(azimuth_angle));
+       // textViewPitch.setText("pitch\n"+String.valueOf(pitch_angle));
+      //  textViewRoll.setText("Roll\n"+String.valueOf(roll_angle));
 
     }
 

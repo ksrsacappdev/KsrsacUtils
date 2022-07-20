@@ -18,8 +18,8 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -42,22 +42,15 @@
             android:weightSum="2"
             android:layout_above="@+id/linearLayout">
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
+                android:layout_weight="2"
                 android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="Latitude"
-                    android:visibility="visible" />
                 <TextView
                     android:id="@+id/latitude"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:maxLength="10"
                     android:text="Latitude"
                     android:textSize="20sp"
                     android:visibility="visible" />
@@ -71,77 +64,26 @@
                     android:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/pitch"
+                    android:id="@+id/tv_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:text="pitch"
+                    android:text="ID"
                     android:textSize="20sp"
                     android:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/roll"
+                    android:id="@+id/work_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:text="Roll"
+                    android:text="Work Name"
                     android:textSize="20sp"
+                    android:maxLines="1"
                     android:visibility="visible" />
-
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".8"
-                android:gravity="end"
-                android:layout_gravity="end"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="Longitude"
-                    android:visibility="visible" />
-                <TextView
-                    android:id="@+id/longitude"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="Latitude"
-                    android:maxLength="10"
-                    android:textSize="20sp"
-                    android:visibility="visible" />
-                <TextView
-                    android:id="@+id/altitude"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="altitude"
-                    android:textSize="20sp"
-                    android:maxLength="20"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/azimuth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="azimuth"
-                    android:textSize="20sp"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/proposal_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:text="Proposal ID"
-                    android:visibility="visible" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

@@ -656,11 +656,12 @@ public class CameraControllerV2WithPreview {
             Bitmap resultBitmap = Bitmap.createBitmap(backgroundBitmap.getWidth(),backgroundBitmap.getHeight(), backgroundBitmap.getConfig());
             Canvas canvas = new Canvas(resultBitmap);
             canvas.drawBitmap(backgroundBitmap, new Matrix(), null);
+            locationView = Bitmap.createScaledBitmap(locationView, backgroundBitmap.getWidth(), locationView.getHeight(), false);
             canvas.drawBitmap(locationView, 0, backgroundBitmap.getHeight()-locationView.getHeight(), new Paint());
            // canvas.drawBitmap(Bitmap.createScaledBitmap(locationView, backgroundBitmap.getWidth(), locationView.getHeight(), false), 0, backgroundBitmap.getHeight()-locationView.getHeight(), new Paint());
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
            // resultBitmap = compressImage(resultBitmap, file);
-            resultBitmap.compress(Bitmap.CompressFormat.PNG, 10, stream);
+            resultBitmap.compress(Bitmap.CompressFormat.PNG, 30, stream);
             byte[] byteArray = stream.toByteArray();
             return byteArray;
 
