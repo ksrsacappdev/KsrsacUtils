@@ -84,8 +84,8 @@ public class NGSKPhotoCaptureActivity extends AppCompatActivity implements Activ
 
         if(str_proposal_id==null|| str_proposal_id.isEmpty())
             str_proposal_id = "Prop_ID";
-        proposal_id.setText(str_proposal_id);
-        mTextViewWorkName.setText(workName);
+        proposal_id.setText(getString(R.string.work_id)+":"+str_proposal_id);
+        mTextViewWorkName.setText(getString(R.string.work_name)+":"+workName);
         get_location_data();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensorList  =

@@ -6,5 +6,7 @@
     <string name="gps_not_available">Please wait..Your gps is not available </string>
     <string name="settings">Settings</string>
     <string name="gps_disable">GPS is disabled in your device. Would you like to enable it? </string>
+    <string name="work_id">Work/Proposal ID</string>
+    <string name="work_name">Work Name</string>
 
 </resources>
